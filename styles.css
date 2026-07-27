@@ -34,3 +34,4 @@ footer { display: flex; flex-wrap: wrap; gap: 0.8rem 1.4rem; padding: 1.5rem 0 2
   .site-header { align-items: flex-start; flex-direction: column; }
   .grid { grid-template-columns: 1fr; }
 }
+.email-canvas { display: inline-block; vertical-align: -0.28em; }
