@@ -1,57 +1,173 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+import {
+  existsSync,
+  readFileSync,
+  readdirSync,
+  statSync,
+} from "node:fs";
+import { dirname, join, relative } from "node:path";
+import { fileURLToPath } from "node:url";
 import test from "node:test";
 
+const root = fileURLToPath(new URL("..", import.meta.url));
+const obsoleteHosts = ["chatgpt" + ".site", "pages" + ".dev"];
+const mailScheme = ["mail", "to:"].join("");
 const routes = [
   {
-    file: new URL("../index.html", import.meta.url),
+    path: "",
+    file: join(root, "index.html"),
     canonical:
       "https://matthewpenkala.github.io/visual-publishing-assistant/",
+    favicon: "./assets/vpa-mark.svg",
   },
   {
-    file: new URL("../privacy/index.html", import.meta.url),
+    path: "privacy/",
+    file: join(root, "privacy/index.html"),
     canonical:
       "https://matthewpenkala.github.io/visual-publishing-assistant/privacy/",
+    favicon: "../assets/vpa-mark.svg",
   },
   {
-    file: new URL("../support/index.html", import.meta.url),
+    path: "support/",
+    file: join(root, "support/index.html"),
     canonical:
       "https://matthewpenkala.github.io/visual-publishing-assistant/support/",
+    favicon: "../assets/vpa-mark.svg",
   },
 ];
 
 const canonicalPattern =
   /<link\s+rel="canonical"\s+href="([^"]+)"\s*\/?>/g;
-const robotsPattern =
-  /<meta\s+name="robots"\s+content="index, follow, noai, noimageai"\s*\/?>/;
 const emailPattern =
   /[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+/i;
+const csp =
+  "default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self' data:; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'";
 
-for (const { file, canonical } of routes) {
-  test(`${file.pathname} preserves its immutable canonical URL`, () => {
+function walk(directory) {
+  return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const path = join(directory, entry.name);
+    if (entry.name === ".git") return [];
+    return entry.isDirectory() ? walk(path) : [path];
+  });
+}
+
+function publishedFiles() {
+  return walk(root).filter(
+    (path) =>
+      !relative(root, path).startsWith("tests/") &&
+      relative(root, path) !== "README.md",
+  );
+}
+
+for (const { file, canonical, favicon } of routes) {
+  test(`${relative(root, file)} preserves the complete immutable page contract`, () => {
     const html = readFileSync(file, "utf8");
     const canonicalMatches = [...html.matchAll(canonicalPattern)];
 
     assert.equal(canonicalMatches.length, 1);
     assert.equal(canonicalMatches[0][1], canonical);
-    assert.match(html, robotsPattern);
+    assert.match(
+      html,
+      /<meta\s+name="robots"\s+content="index, follow, noai, noimageai"\s*\/?>/,
+    );
+    assert.match(html, /<meta\s+name="referrer"\s+content="no-referrer"\s*\/?>/);
+    assert.match(html, /<meta\s+name="pinterest"\s+content="nopin"\s*\/?>/);
+    assert.ok(
+      html.includes(
+        `<meta http-equiv="Content-Security-Policy" content="${csp}">`,
+      ),
+    );
+    assert.ok(
+      html.includes(
+        `<link rel="icon" href="${favicon}" type="image/svg+xml">`,
+      ),
+    );
+    assert.ok(
+      html.includes(
+        "Independent integration; not affiliated with or endorsed by Pinterest.",
+      ),
+    );
   });
 }
 
-test("public sources do not expose a plaintext contact address or mail link", () => {
-  const sources = [
-    ...routes.map(({ file }) => readFileSync(file, "utf8")),
-    readFileSync(new URL("../contact.js", import.meta.url), "utf8"),
-  ];
-
-  for (const source of sources) {
-    assert.doesNotMatch(source, emailPattern);
-    assert.equal(source.toLowerCase().includes("mailto:"), false);
+test("all published text assets omit contact and obsolete-host literals", () => {
+  for (const path of publishedFiles()) {
+    if (!/\.(?:html|css|js|txt|svg)$/i.test(path)) continue;
+    const source = readFileSync(path, "utf8");
+    assert.doesNotMatch(source, emailPattern, relative(root, path));
+    assert.equal(source.toLowerCase().includes(mailScheme), false);
+    for (const host of obsoleteHosts) {
+      assert.equal(source.toLowerCase().includes(host), false);
+    }
   }
 });
 
-test("documentation freezes the complete public URL contract exactly", () => {
-  const readme = readFileSync(new URL("../README.md", import.meta.url), "utf8");
+test("HTML resource and navigation paths stay inside the project site", () => {
+  for (const { file } of routes) {
+    const html = readFileSync(file, "utf8");
+    assert.doesNotMatch(html, /(?:href|src)="\/(?!\/)/);
+
+    for (const [, attribute, value] of html.matchAll(
+      /\b(href|src)="([^"]+)"/g,
+    )) {
+      if (
+        value.startsWith("#") ||
+        value.startsWith("https://matthewpenkala.github.io/")
+      ) {
+        continue;
+      }
+      const resource = join(dirname(file), value.split("#", 1)[0]);
+      const resolved = statSync(resource).isDirectory()
+        ? join(resource, "index.html")
+        : resource;
+      assert.equal(existsSync(resolved), true, `${attribute} ${value}`);
+      assert.equal(relative(root, resolved).startsWith(".."), false);
+    }
+  }
+});
+
+test("served pages load no third-party executable or visual resources", () => {
+  for (const { file } of routes) {
+    const html = readFileSync(file, "utf8");
+    assert.doesNotMatch(
+      html,
+      /<(?:script|img)\b[^>]+\bsrc="https?:\/\//i,
+    );
+    assert.doesNotMatch(
+      html,
+      /<link\b(?=[^>]*\brel="(?:stylesheet|icon)")(?=[^>]*\bhref="https?:\/\/)[^>]*>/i,
+    );
+    assert.doesNotMatch(html, /<(?:iframe|object|embed|form)\b/i);
+  }
+});
+
+test("independent brand asset is local, vector, fixed, and non-Pinterest", () => {
+  const asset = join(root, "assets/vpa-mark.svg");
+  const bytes = readFileSync(asset);
+  assert.equal(
+    createHash("sha256").update(bytes).digest("hex"),
+    "06b865bc28a595eee547041d1159374d72204957e25ef95e4eb17509cfec2ee9",
+  );
+  const svg = bytes.toString("utf8");
+  assert.match(svg, /viewBox="0 0 64 64"/);
+  assert.doesNotMatch(svg, /Pinterest|#e60023|\b(?:href|src)="https?:\/\//i);
+});
+
+test("contact component retains accessible action and high-DPI repaint safeguards", () => {
+  const script = readFileSync(join(root, "contact.js"), "utf8");
+  const html = routes.map(({ file }) => readFileSync(file, "utf8")).join("\n");
+  assert.match(script, /event\.isTrusted/);
+  assert.match(script, /window\.devicePixelRatio/);
+  assert.match(script, /window\.addEventListener\(\s*"resize"/);
+  assert.match(script, /canvas\.setAttribute\("aria-hidden", "true"\)/);
+  assert.match(html, /aria-label="Email support \(opens your mail app\)"/);
+  assert.match(html, /<noscript>/);
+});
+
+test("documentation freezes URLs and states crawler-control limitations honestly", () => {
+  const readme = readFileSync(join(root, "README.md"), "utf8");
+  const robots = readFileSync(join(root, "robots.txt"), "utf8");
 
   for (const { canonical } of routes) {
     assert.equal(
@@ -60,4 +176,7 @@ test("documentation freezes the complete public URL contract exactly", () => {
       `${canonical} must appear exactly once in README.md`,
     );
   }
+  assert.match(readme, /not a domain-root\s+robots policy/i);
+  assert.match(readme, /not general scraping prevention/i);
+  assert.match(robots, /does not control domain-wide crawling/i);
 });

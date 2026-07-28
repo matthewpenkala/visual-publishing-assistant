@@ -9,10 +9,11 @@
 * { box-sizing: border-box; }
 body { margin: 0; }
 a { color: #6a392b; text-underline-offset: 0.2em; }
+a:focus-visible { outline: 3px solid #176b65; outline-offset: 0.22rem; border-radius: 0.2rem; }
 .site-header, main, footer { width: min(72rem, calc(100% - 2.5rem)); margin-inline: auto; }
 .site-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.4rem 0; border-bottom: 1px solid #d8d0c4; }
 .wordmark { display: flex; align-items: center; gap: 0.7rem; color: inherit; font-weight: 750; text-decoration: none; }
-.mark { display: grid; place-items: center; width: 2.35rem; aspect-ratio: 1; border-radius: 0.8rem; background: #772f25; color: white; font-size: 0.76rem; letter-spacing: 0.04em; }
+.mark { display: block; width: 2.35rem; height: 2.35rem; flex: 0 0 auto; }
 nav { display: flex; gap: 1rem; }
 main { padding: 3.5rem 0 5rem; }
 section, article { max-width: 62rem; margin: 0 auto 4rem; }
@@ -28,8 +29,10 @@ h3 { margin-bottom: 0.4rem; }
 .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 .grid article { margin: 0; padding: 1.35rem; border: 1px solid #d8d0c4; border-radius: 1rem; background: #fffdf8; }
 .notice { margin-top: 2rem; padding: 1rem; border-left: 4px solid #c36e4a; background: #fff9ee; }
+.independence { color: #514b44; font-size: 0.94rem; }
 li + li { margin-top: 0.45rem; }
 footer { display: flex; flex-wrap: wrap; gap: 0.8rem 1.4rem; padding: 1.5rem 0 2.5rem; border-top: 1px solid #d8d0c4; }
+footer .independence { flex-basis: 100%; }
 @media (max-width: 650px) {
   .site-header { align-items: flex-start; flex-direction: column; }
   .grid { grid-template-columns: 1fr; }

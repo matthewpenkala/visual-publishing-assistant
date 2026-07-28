@@ -49,6 +49,7 @@
 
   function init() {
     var targets = document.querySelectorAll("[data-contact]");
+    var canvases = [];
     for (var i = 0; i < targets.length; i += 1) {
       var el = targets[i];
       el.addEventListener("click", openMail);
@@ -58,6 +59,7 @@
         canvas.setAttribute("aria-hidden", "true");
         el.textContent = "";
         el.appendChild(canvas);
+        canvases.push(canvas);
         paint(canvas);
         if (document.fonts && document.fonts.ready) {
           document.fonts.ready.then(
@@ -70,6 +72,17 @@
         }
       }
     }
+    var repaintTimer;
+    window.addEventListener(
+      "resize",
+      function () {
+        window.clearTimeout(repaintTimer);
+        repaintTimer = window.setTimeout(function () {
+          for (var j = 0; j < canvases.length; j += 1) paint(canvases[j]);
+        }, 80);
+      },
+      { passive: true },
+    );
   }
 
   if (document.readyState === "loading") {

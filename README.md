@@ -16,6 +16,16 @@ companion URL under the same approved GitHub Pages project:
 
 ## Verify
 
+All three pages use the page-level Pinterest `nopin` directive to prevent
+ordinary saves to Pinterest, plus best-effort `noai`/`noimageai` robots
+metadata. Those cooperative directives are not general scraping prevention.
+
+The served `visual-publishing-assistant/robots.txt` file is not a domain-root
+robots policy. Standards-based crawlers consult
+`https://matthewpenkala.github.io/robots.txt`, which this project repository
+cannot control. The project-path file is retained only as a documented
+fallback for a future separately owned origin.
+
 Run the URL, anti-leak, and metadata contract tests with:
 
 ```sh

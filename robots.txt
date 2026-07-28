@@ -1,3 +1,8 @@
+# This file is served at /visual-publishing-assistant/robots.txt.
+# Standard crawlers consult /robots.txt at the github.io domain root, so this
+# project-path file does not control domain-wide crawling. It is retained as a
+# documented fallback if these pages ever move to their own origin.
+#
 # Normal search indexing is welcome.
 User-agent: *
 Allow: /
