@@ -2,12 +2,13 @@
   "use strict";
 
   // The contact address must never exist as a literal string in the HTML or
-  // in this script: it is stored only as reversed, rolling-XOR character
-  // codes, assembled in memory on a trusted user gesture, and displayed by
-  // painting onto a canvas — never written into DOM text, attributes, or the
-  // accessibility tree.
+  // in this script. It is stored only as reversed, rolling-XOR character
+  // codes, assembled in memory after an active trusted user gesture, and
+  // displayed by painting onto a canvas — never written into DOM text,
+  // attributes, or the accessibility tree.
   var CODES = [78, 92, 31, 83, 88, 90, 80, 70, 119, 76, 77, 91, 86];
   var KEY = 47;
+  var canvases = [];
 
   function decode() {
     var out = [];
@@ -17,11 +18,9 @@
     return out.reverse().join("");
   }
 
-  function openMail(event) {
-    event.preventDefault();
-    // Synthetic clicks dispatched by page scripts are not trusted.
-    if (!event.isTrusted) return;
-    window.location.href = ["mai", "lto:"].join("") + decode();
+  function hasActiveHumanGesture(event) {
+    if (!event.isTrusted) return false;
+    return !navigator.userActivation || navigator.userActivation.isActive;
   }
 
   function paint(canvas) {
@@ -47,30 +46,44 @@
     context.fillText(text, 0, size * 1.02);
   }
 
+  function reveal(target) {
+    var canvas = document.createElement("canvas");
+    canvas.className = "email-canvas";
+    canvas.setAttribute("aria-hidden", "true");
+    target.textContent = "";
+    target.appendChild(canvas);
+    target.setAttribute("data-contact-state", "revealed");
+    target.setAttribute(
+      "aria-label",
+      "Email support address revealed; activate again to open your mail app",
+    );
+    canvases.push(canvas);
+    paint(canvas);
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () {
+        paint(canvas);
+      });
+    }
+  }
+
+  function activateContact(event) {
+    event.preventDefault();
+    if (!hasActiveHumanGesture(event)) return;
+    var target = event.currentTarget;
+    if (target.getAttribute("data-contact-state") !== "revealed") {
+      reveal(target);
+      return;
+    }
+    window.location.href = ["mai", "lto:"].join("") + decode();
+  }
+
   function init() {
     var targets = document.querySelectorAll("[data-contact]");
-    var canvases = [];
     for (var i = 0; i < targets.length; i += 1) {
       var el = targets[i];
-      el.addEventListener("click", openMail);
-      if (el.hasAttribute("data-contact-display")) {
-        var canvas = document.createElement("canvas");
-        canvas.className = "email-canvas";
-        canvas.setAttribute("aria-hidden", "true");
-        el.textContent = "";
-        el.appendChild(canvas);
-        canvases.push(canvas);
-        paint(canvas);
-        if (document.fonts && document.fonts.ready) {
-          document.fonts.ready.then(
-            (function (c) {
-              return function () {
-                paint(c);
-              };
-            })(canvas),
-          );
-        }
-      }
+      el.addEventListener("click", activateContact);
+      el.setAttribute("data-contact-state", "concealed");
+      el.textContent = "Reveal email address";
     }
     var repaintTimer;
     window.addEventListener(

@@ -20,6 +20,14 @@ All three pages use the page-level Pinterest `nopin` directive to prevent
 ordinary saves to Pinterest, plus best-effort `noai`/`noimageai` robots
 metadata. Those cooperative directives are not general scraping prevention.
 
+The support address is absent from published HTML, DOM text, attributes, and
+links. Its encoded character data is decoded only after an active trusted user
+gesture and is painted into an `aria-hidden` high-DPI canvas; a second active
+gesture constructs the mail action in memory. This blocks ordinary source/DOM
+harvesters and passive screenshot-at-load collection. It cannot guarantee
+secrecy after reveal: determined browser automation or OCR can capture anything
+a human is ultimately allowed to see on a public static page.
+
 The served `visual-publishing-assistant/robots.txt` file is not a domain-root
 robots policy. Standards-based crawlers consult
 `https://matthewpenkala.github.io/robots.txt`, which this project repository

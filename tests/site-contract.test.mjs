@@ -154,14 +154,19 @@ test("independent brand asset is local, vector, fixed, and non-Pinterest", () =>
   assert.doesNotMatch(svg, /Pinterest|#e60023|\b(?:href|src)="https?:\/\//i);
 });
 
-test("contact component retains accessible action and high-DPI repaint safeguards", () => {
+test("contact component gates reveal and mail actions behind active human gestures", () => {
   const script = readFileSync(join(root, "contact.js"), "utf8");
   const html = routes.map(({ file }) => readFileSync(file, "utf8")).join("\n");
   assert.match(script, /event\.isTrusted/);
+  assert.match(script, /navigator\.userActivation/);
+  assert.match(script, /data-contact-state/);
+  assert.match(script, /function reveal\(target\)/);
+  assert.match(script, /function activateContact\(event\)/);
   assert.match(script, /window\.devicePixelRatio/);
   assert.match(script, /window\.addEventListener\(\s*"resize"/);
   assert.match(script, /canvas\.setAttribute\("aria-hidden", "true"\)/);
-  assert.match(html, /aria-label="Email support \(opens your mail app\)"/);
+  assert.match(html, /aria-label="Reveal the email support address"/);
+  assert.match(html, />Reveal email address<noscript>/);
   assert.match(html, /<noscript>/);
 });
 
@@ -178,5 +183,6 @@ test("documentation freezes URLs and states crawler-control limitations honestly
   }
   assert.match(readme, /not a domain-root\s+robots policy/i);
   assert.match(readme, /not general scraping prevention/i);
+  assert.match(readme, /cannot guarantee\s+secrecy after reveal/i);
   assert.match(robots, /does not control domain-wide crawling/i);
 });
