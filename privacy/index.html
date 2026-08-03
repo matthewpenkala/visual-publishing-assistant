@@ -22,13 +22,13 @@
     <main>
       <article>
         <header class="hero compact">
-          <p class="eyebrow">Effective July 27, 2026</p>
+          <p class="eyebrow">Effective August 3, 2026</p>
           <h1>Privacy policy</h1>
           <p class="lede">This policy describes the local macOS edition of Visual Publishing Assistant, published by Matthew Penkala.</p>
           <p class="notice">This policy covers the current private, local-first MVP. It does not describe a future hosted or multi-user service.</p>
         </header>
         <h2>1. What the product does</h2>
-        <p>Visual Publishing Assistant lets a user connect a Pinterest account through Pinterest’s authorization flow, read the connected user’s account data through Pinterest API v5, and prepare and perform exact user-confirmed organic Pin and board actions.</p>
+        <p>Visual Publishing Assistant lets a user connect a Pinterest account through Pinterest’s authorization flow, read the connected user’s account data through Pinterest API v5, curate existing public Pins, retain attribution for user-supplied external inspiration references, and perform explicitly requested finite organic image, video Pin, and board tasks.</p>
         <h2>2. Information handled</h2>
         <p>Depending on the permissions granted, the product may handle:</p>
         <ul>
@@ -36,7 +36,7 @@
           <li>The connected user’s boards, sections, owned Pins, links, media metadata, and pagination information.</li>
           <li>The operator’s Pinterest App ID and App secret.</li>
           <li>Pinterest access and refresh tokens, granted scopes, expiry metadata, and connection status.</li>
-          <li>User-authored draft content, media, alt text, destination, rights attestation, and AI disclosure values.</li>
+          <li>User-authored or agent-prepared draft content, image or video media and cover data, alt text, destination, source link and attribution, optional provenance note, media fingerprint, and AI disclosure values.</li>
           <li>Redacted diagnostic and correlation information needed to complete or troubleshoot a request.</li>
         </ul>
         <p>The product does not ask for or store a Pinterest password, browser cookie, or browser profile.</p>
@@ -44,16 +44,17 @@
         <ul>
           <li>Start, complete, verify, and refresh Pinterest authorization.</li>
           <li>Read the connected user’s current boards, sections, Pins, and account information.</li>
-          <li>Prepare, validate, preview, and execute a user-requested Pinterest API operation.</li>
+          <li>Prepare, validate, execute, and verify each exact member of a finite user-requested Pinterest API task.</li>
           <li>Protect the workflow, report status, and provide redacted diagnostics.</li>
           <li>Remove local connection information when the user disconnects or resets setup.</li>
         </ul>
         <p>Pinterest-derived content is not used to train, fine-tune, improve, or develop an AI or machine-learning model, and the product does not create a durable Pinterest-content index.</p>
         <h2>4. Local storage and retention</h2>
         <ul>
-          <li>The App ID, App secret, callback setting, and Pinterest token record are stored in macOS Keychain on the operator’s Mac.</li>
+          <li>The App ID, App secret, callback setting, and Pinterest token record are stored in one fixed owner-only local file under the operator’s Codex directory. Its directory and file modes are restricted to 0700 and 0600 on the operator’s encrypted Mac.</li>
           <li>Pinterest account, board, section, Pin, and pagination objects are processed live and are not intentionally written to a product database.</li>
-          <li>User-authored outbound drafts are held in process memory for up to 30 minutes, until used, or until the process exits.</li>
+          <li>User-authored outbound drafts are held in process memory for up to 30 minutes, until used, or until the process exits. Local videos remain on disk under the user’s control and are streamed to Pinterest rather than buffered into the draft.</li>
+          <li>Temporary video-upload parameters returned by Pinterest exist only for the active upload and are not intentionally persisted or returned through the integration.</li>
           <li>OAuth attempt state is held in memory for up to 10 minutes and is single-use.</li>
           <li>Redacted diagnostics may be retained by the surrounding MCP host or operating system under that host’s own settings.</li>
         </ul>
@@ -61,14 +62,15 @@
         <p>The product sends authorized requests and user-selected content to Pinterest as necessary to provide the requested feature. Pinterest handles that information under its own terms and privacy policy. Prompts and tool interactions may also be processed by the user’s selected MCP host under that host’s terms and privacy controls. The local product does not sell Pinterest-derived information.</p>
         <h2>6. User choices and deletion</h2>
         <ul>
-          <li>Cancel Pinterest authorization or decline any write.</li>
-          <li>Disconnect to remove the local Pinterest access/refresh token record from Keychain.</li>
+          <li>Cancel Pinterest authorization or withhold task-level authorization by not requesting a bounded write.</li>
+          <li>Disconnect to remove the local Pinterest access/refresh token record from the owner-only credential file.</li>
           <li>Reset local setup to remove the App ID, App secret, and callback setting stored by the product.</li>
-          <li>Request a separately confirmed Pin or board deletion through the official Pinterest API.</li>
+          <li>Request deletion of one exact Pin, board, or section through a separate instruction that explicitly names the destructive action and target.</li>
+          <li>Request a local board export. Only that explicit request writes Pinterest-derived content and optional media to the user-selected destination; otherwise board retrieval remains ephemeral.</li>
         </ul>
         <p>Local deletion does not claim to revoke a token at Pinterest unless a supported upstream revocation operation is actually performed and verified. Pinterest, the MCP host, macOS, and system backups may retain information under their own policies and settings.</p>
         <h2>7. Security</h2>
-        <p>The product is designed to keep credentials and tokens out of model-visible responses, prompts, source files, process arguments, and ordinary diagnostics. It uses macOS Keychain, exact OAuth state/callback validation, bounded requests, redaction, and explicit confirmation for writes. No security method is perfect.</p>
+        <p>The product is designed to keep credentials and tokens out of model-visible responses, prompts, source files, process arguments, and ordinary diagnostics. It uses an owner-only atomically replaced local credential file, exact OAuth state/callback validation, bounded one-object operations, source provenance and media validation, redaction, accurate mutation annotations, and post-write readback. No security method is perfect.</p>
         <h2>8. Changes and contact</h2>
         <p>Material changes will be reflected by an updated effective date on this page. Privacy or support questions may be sent to <a id="contact" href="#contact" data-contact data-contact-display aria-label="Reveal the email support address">Reveal email address<noscript> (JavaScript required)</noscript></a>.</p>
       </article>

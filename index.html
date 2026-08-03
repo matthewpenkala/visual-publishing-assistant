@@ -23,7 +23,7 @@
       <section class="hero">
         <p class="eyebrow">Local macOS MCP connector</p>
         <h1>Careful Pinterest workflows, under the user’s control.</h1>
-        <p class="lede">Visual Publishing Assistant connects an authenticated Pinterest account through Pinterest OAuth and API v5. It supports live account reads and exact, individually confirmed organic Pin and board actions.</p>
+        <p class="lede">Visual Publishing Assistant connects an authenticated Pinterest account through Pinterest OAuth and API v5. It supports live account reads, native curation of existing public Pins, attributed source-linked inspiration saves, and finite organic image and video Pin tasks.</p>
         <p class="independence">Independent integration; not affiliated with or endorsed by Pinterest.</p>
         <p class="actions"><a class="button" href="#contact">Contact support</a><a href="./privacy/">Read the privacy policy</a></p>
       </section>
@@ -32,8 +32,8 @@
         <h2>Built for a private, local-first MVP.</h2>
         <div class="grid">
           <article><h3>Official authorization</h3><p>Pinterest passwords and browser cookies are never requested. Account access uses Pinterest’s OAuth Authorization Code flow.</p></article>
-          <article><h3>Local secret storage</h3><p>The operator App ID, App secret, and user OAuth token record are stored in macOS Keychain on the operator’s Mac.</p></article>
-          <article><h3>Human-controlled writes</h3><p>Every create, update, or delete action requires an exact preview and human confirmation. Ambiguous creates are not blindly retried.</p></article>
+          <article><h3>Local secret storage</h3><p>The operator App ID, App secret, and user OAuth token record are stored in one owner-only local file (mode 0600) on the operator’s encrypted Mac.</p></article>
+          <article><h3>Bounded authorization</h3><p>A request naming an exact destination and finite operation set authorizes only that task end to end. It never authorizes future, unrelated, destructive, or open-ended writes, and ambiguous creates are not blindly retried.</p></article>
           <article><h3>Minimal retention</h3><p>Pinterest account content is read live, not stored in a durable product database. Outbound drafts are short-lived and in memory.</p></article>
         </div>
       </section>
@@ -41,8 +41,10 @@
         <p class="eyebrow">Current scope</p>
         <h2>Organic account and publishing operations.</h2>
         <ul>
-          <li>Read the connected user’s profile, boards, sections, and Pins.</li>
-          <li>Create boards and prepare, create, update, or delete one selected Pin at a time.</li>
+          <li>Read the connected user’s profile, relationships, organic analytics, boards, sections, and Pins with bounded pagination.</li>
+          <li>Save existing public Pins through Pinterest’s native curation endpoint and retain source links and attribution for supplied external references.</li>
+          <li>Create, read, update, or explicitly delete boards and sections; validate, publish, update, or explicitly delete bounded image or video Pins.</li>
+          <li>Retrieve a complete bounded board export ephemerally, or explicitly download available media with safe filenames, a manifest, deduplication, and partial-failure reporting.</li>
           <li>Keep secret-board permissions, advertising, commerce, and catalogs outside the default scope.</li>
           <li>Keep user-requested public visual research separate from authenticated account operations.</li>
         </ul>
