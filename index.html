@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self' data:; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="A local macOS MCP and AI connector for careful Pinterest account and publishing workflows.">
+    <meta name="description" content="A local macOS and Windows Codex connector for careful Pinterest account and publishing workflows.">
     <meta name="robots" content="index, follow, noai, noimageai">
     <meta name="referrer" content="no-referrer">
     <meta name="pinterest" content="nopin">
@@ -21,7 +21,7 @@
     </header>
     <main>
       <section class="hero">
-        <p class="eyebrow">Local macOS MCP connector</p>
+        <p class="eyebrow">Local macOS + Windows Codex connector</p>
         <h1>Careful Pinterest workflows, under the user’s control.</h1>
         <p class="lede">Visual Publishing Assistant connects an authenticated Pinterest account through Pinterest OAuth and API v5. It supports live account reads, native curation of existing public Pins, attributed source-linked inspiration saves, and finite organic image and video Pin tasks.</p>
         <p class="independence">Independent integration; not affiliated with or endorsed by Pinterest.</p>
@@ -32,7 +32,7 @@
         <h2>Built for a private, local-first MVP.</h2>
         <div class="grid">
           <article><h3>Official authorization</h3><p>Pinterest passwords and browser cookies are never requested. Account access uses Pinterest’s OAuth Authorization Code flow.</p></article>
-          <article><h3>Local secret storage</h3><p>The operator App ID, App secret, and user OAuth token record are stored in one owner-only local file (mode 0600) on the operator’s encrypted Mac.</p></article>
+          <article><h3>Local secret storage</h3><p>The operator App ID, App secret, and OAuth token record stay in one owner-only local file: protected POSIX modes on macOS or a protected current-user NTFS access list on Windows.</p></article>
           <article><h3>Bounded authorization</h3><p>A request naming an exact destination and finite operation set authorizes only that task end to end. It never authorizes future, unrelated, destructive, or open-ended writes, and ambiguous creates are not blindly retried.</p></article>
           <article><h3>Minimal retention</h3><p>Pinterest account content is read live, not stored in a durable product database. Outbound drafts are short-lived and in memory.</p></article>
         </div>
@@ -48,6 +48,7 @@
           <li>Keep secret-board permissions, advertising, commerce, and catalogs outside the default scope.</li>
           <li>Keep user-requested public visual research separate from authenticated account operations.</li>
         </ul>
+        <p class="notice"><strong>Current access boundary:</strong> Pinterest Trial permits live reads, but the production API denied Create Pin with code 29 after a successful video media upload and processing sequence. Standard access and a successful production readback remain required before production publishing is described as ready. Sandbox is test-only and ordinary publishing never falls back to browser automation.</p>
       </section>
     </main>
     <footer><strong>Visual Publishing Assistant</strong><span>Published by Matthew Penkala.</span><a id="contact" href="#contact" data-contact data-contact-display aria-label="Reveal the email support address">Reveal email address<noscript> (JavaScript required)</noscript></a><span class="independence">Independent integration; not affiliated with or endorsed by Pinterest.</span></footer>

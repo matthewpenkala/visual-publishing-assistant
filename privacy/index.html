@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self' data:; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Privacy practices for the local macOS edition of Visual Publishing Assistant.">
+    <meta name="description" content="Privacy practices for the local macOS and Windows edition of Visual Publishing Assistant.">
     <meta name="robots" content="index, follow, noai, noimageai">
     <meta name="referrer" content="no-referrer">
     <meta name="pinterest" content="nopin">
@@ -24,7 +24,7 @@
         <header class="hero compact">
           <p class="eyebrow">Effective August 3, 2026</p>
           <h1>Privacy policy</h1>
-          <p class="lede">This policy describes the local macOS edition of Visual Publishing Assistant, published by Matthew Penkala.</p>
+          <p class="lede">This policy describes the local macOS and Windows edition of Visual Publishing Assistant, published by Matthew Penkala.</p>
           <p class="notice">This policy covers the current private, local-first MVP. It does not describe a future hosted or multi-user service.</p>
         </header>
         <h2>1. What the product does</h2>
@@ -51,7 +51,7 @@
         <p>Pinterest-derived content is not used to train, fine-tune, improve, or develop an AI or machine-learning model, and the product does not create a durable Pinterest-content index.</p>
         <h2>4. Local storage and retention</h2>
         <ul>
-          <li>The App ID, App secret, callback setting, and Pinterest token record are stored in one fixed owner-only local file under the operator’s Codex directory. Its directory and file modes are restricted to 0700 and 0600 on the operator’s encrypted Mac.</li>
+          <li>The App ID, App secret, callback setting, non-secret production-entitlement observations, and Pinterest token record are stored in one fixed owner-only file under the operator’s Codex directory. macOS uses current-user ownership and 0700/0600 modes; Windows uses a protected current-user NTFS access list.</li>
           <li>Pinterest account, board, section, Pin, and pagination objects are processed live and are not intentionally written to a product database.</li>
           <li>User-authored outbound drafts are held in process memory for up to 30 minutes, until used, or until the process exits. Local videos remain on disk under the user’s control and are streamed to Pinterest rather than buffered into the draft.</li>
           <li>Temporary video-upload parameters returned by Pinterest exist only for the active upload and are not intentionally persisted or returned through the integration.</li>
@@ -68,7 +68,7 @@
           <li>Request deletion of one exact Pin, board, or section through a separate instruction that explicitly names the destructive action and target.</li>
           <li>Request a local board export. Only that explicit request writes Pinterest-derived content and optional media to the user-selected destination; otherwise board retrieval remains ephemeral.</li>
         </ul>
-        <p>Local deletion does not claim to revoke a token at Pinterest unless a supported upstream revocation operation is actually performed and verified. Pinterest, the MCP host, macOS, and system backups may retain information under their own policies and settings.</p>
+        <p>Local deletion does not claim to revoke a token at Pinterest unless a supported upstream revocation operation is actually performed and verified. Pinterest, the Codex/MCP host, macOS or Windows, and system backups may retain information under their own policies and settings.</p>
         <h2>7. Security</h2>
         <p>The product is designed to keep credentials and tokens out of model-visible responses, prompts, source files, process arguments, and ordinary diagnostics. It uses an owner-only atomically replaced local credential file, exact OAuth state/callback validation, bounded one-object operations, source provenance and media validation, redaction, accurate mutation annotations, and post-write readback. No security method is perfect.</p>
         <h2>8. Changes and contact</h2>
