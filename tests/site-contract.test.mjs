@@ -154,6 +154,16 @@ test("independent brand asset is local, vector, fixed, and non-Pinterest", () =>
   assert.doesNotMatch(svg, /Pinterest|#e60023|\b(?:href|src)="https?:\/\//i);
 });
 
+test("homepage qualifies production publishing and uses the independent product identity", () => {
+  const html = readFileSync(join(root, "index.html"), "utf8");
+  assert.match(html, /Visual Publishing Assistant/);
+  assert.match(html, /Standard-access-gated publishing/i);
+  assert.match(html, /production publishing remains gated on Pinterest Standard access/i);
+  assert.match(html, /Windows ARM64 retains connection, image, curation, board, Pin-read, and export workflows/i);
+  assert.match(html, /local-video preparation remains unavailable/i);
+  assert.doesNotMatch(html, /<title>Pinterest<\/title>|Pinterest (?:app|plugin)<\/h1>/i);
+});
+
 test("contact component gates reveal and mail actions behind active human gestures", () => {
   const script = readFileSync(join(root, "contact.js"), "utf8");
   const html = routes.map(({ file }) => readFileSync(file, "utf8")).join("\n");
