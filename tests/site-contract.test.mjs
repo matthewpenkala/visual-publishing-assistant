@@ -203,5 +203,6 @@ test("documentation freezes URLs and states crawler-control limitations honestly
   assert.match(readme, /not a domain-root\s+robots policy/i);
   assert.match(readme, /not general scraping prevention/i);
   assert.match(readme, /cannot guarantee\s+secrecy after reveal/i);
+  assert.match(readme, /aligned\s+with private plugin v0\.5\.4/i);
   assert.match(robots, /does not control domain-wide crawling/i);
 });

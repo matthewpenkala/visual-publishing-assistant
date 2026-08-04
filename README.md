@@ -19,8 +19,9 @@ companion URL under the same approved GitHub Pages project:
 
 The current local-media implementation uses package-local MediaInfo WASM and
 one pinned FFmpeg 8.1 runtime on macOS arm64/x64 and Windows x64. The project
-does not ship or claim Windows ARM64 support. Keep this public wording aligned
-with the private plugin manifest and capability matrix.
+does not ship or claim Windows ARM64 support. This public contract is aligned
+with private plugin v0.5.4; keep it synchronized with the plugin manifest and
+capability matrix.
 
 ## Verify
 
