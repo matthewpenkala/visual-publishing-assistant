@@ -1,7 +1,8 @@
 # Visual Publishing Assistant public pages
 
 Public landing, privacy, and support pages for Matthew Penkala's internal,
-local-first macOS and Windows Visual Publishing Assistant integration.
+local-first macOS arm64/x64 and Windows x64 Visual Publishing Assistant
+integration.
 
 ## Immutable public URL contract
 
@@ -13,6 +14,13 @@ companion URL under the same approved GitHub Pages project:
 - Website: `https://matthewpenkala.github.io/visual-publishing-assistant/`
 - Privacy: `https://matthewpenkala.github.io/visual-publishing-assistant/privacy/`
 - Support: `https://matthewpenkala.github.io/visual-publishing-assistant/support/`
+
+## Platform contract
+
+The current local-media implementation uses package-local MediaInfo WASM and
+one pinned FFmpeg 8.1 runtime on macOS arm64/x64 and Windows x64. The project
+does not ship or claim Windows ARM64 support. Keep this public wording aligned
+with the private plugin manifest and capability matrix.
 
 ## Verify
 

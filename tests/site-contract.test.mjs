@@ -156,11 +156,20 @@ test("independent brand asset is local, vector, fixed, and non-Pinterest", () =>
 
 test("homepage qualifies production publishing and uses the independent product identity", () => {
   const html = readFileSync(join(root, "index.html"), "utf8");
+  const allHtml = routes
+    .map(({ file }) => readFileSync(file, "utf8"))
+    .join("\n");
   assert.match(html, /Visual Publishing Assistant/);
   assert.match(html, /Standard-access-gated publishing/i);
   assert.match(html, /production publishing remains gated on Pinterest Standard access/i);
-  assert.match(html, /Windows ARM64 retains connection, image, curation, board, Pin-read, and export workflows/i);
-  assert.match(html, /local-video preparation remains unavailable/i);
+  assert.match(html, /macOS arm64\/x64 and Windows x64/i);
+  assert.match(html, /package-local MediaInfo WASM/i);
+  assert.match(html, /pinned FFmpeg 8\.1 runtime/i);
+  assert.match(html, /No Windows ARM64 build is shipped or claimed/i);
+  assert.doesNotMatch(
+    allHtml,
+    /Windows ARM64 retains|x64\/ia32|compatible packaged probe|media-probe architectures/i,
+  );
   assert.doesNotMatch(html, /<title>Pinterest<\/title>|Pinterest (?:app|plugin)<\/h1>/i);
 });
 
